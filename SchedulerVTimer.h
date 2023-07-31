@@ -1,7 +1,9 @@
 
 #ifndef SCHEDULERVTIMER
 #define SCHEDULERVTIMER
-#include <arduino.h>
+#include <Arduino.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdarg.h>
 
 #ifndef MAX_APP_TASKS
