@@ -121,6 +121,11 @@ void startClockTimer() {
   TIMSK2 |= (1 << TOIE2);               // enable timer overflow interrupt ISR
 }
 
+#endif
+
+#if PLATFORM == MSP430FR5994
+#endif
+
 /**
  * This Timer2 Interrupt Service Routine is triggered whenever a Timer2 expires. 
  * It decrements the value of a position of _vtTasksTimer it finds to be higher than 0, 
@@ -128,7 +133,10 @@ void startClockTimer() {
  * It also restores the timer value to the starting one, allowing the timer to run again.
  */
 ISR(TIMER2_OVF_vect) {
+#if PLATFORM == ATMEGA328P
   TCNT2 = (uint8_t)(255 - (0.016 * 16000000 / 1024)); // preload timer 
+//#elif PLATFORM == MSP430FR5994
+#endif
   for (uint8_t i = 0; i < MAX_VT_TASKS; i++){
     if (_vtTasksTimer[i] > 0) {
       _vtTasksTimer[i]--;
@@ -139,12 +147,6 @@ ISR(TIMER2_OVF_vect) {
     }
   }
 }
-
-#endif
-
-#if PLATFORM == MSP430FR5994
-#endif
-
 
 /**
  * This function changes the _vtTasksTimer array to determine how many timers need to
