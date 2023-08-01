@@ -11,7 +11,7 @@ volatile uint8_t _appTasksArg[MAX_APP_TASKS] = {0}; /**< Array of arguments for 
 task_ptr_t _vtTasks[MAX_VT_TASKS]; /**< Array of function pointers to the tasks of type vtimer that were added to the scheduler. */ 
 volatile uint8_t _vtTasksFlag[MAX_VT_TASKS] = {false}; /**< Array of flags tha determine whether a vtimer task has been posted for execution or not. */
 uint8_t _vtTasksArg[MAX_VT_TASKS] = {0}; /**< Array of arguments for the vtimer tasks by their corresponding position. */  
-volatile uint8_t _vtTasksTimer[MAX_VT_TASKS] = {0}; /**< Array of timer counter for the vtimer tasks by their corresponding position, that is, how many times it will run. */  
+volatile uint16_t _vtTasksTimer[MAX_VT_TASKS] = {0}; /**< Array of timer counter for the vtimer tasks by their corresponding position, that is, how many times it will run. */  
 
 
 task_ptr_t logInt;
@@ -59,7 +59,7 @@ void setupTasks(taskId_t taskType,...) {
  * @param taskType the type of the task to be searched, valid values are app and vtimer
  * @param fx the name of the task to be searched
  */
-int8_t getTaskIdx(taskId_t taskType,task_ptr_t fx) {
+int8_t getTaskIdx(taskId_t taskType, task_ptr_t fx) {
     task_ptr_t* auxPtr;
     uint8_t maxTasks;
     if (taskType == app) {
@@ -151,10 +151,10 @@ ISR(TIMER2_OVF_vect) {
  */
 void startVTimer(task_ptr_t fx, uint16_t tmilli) {
     int8_t idx = getTaskIdx(vtimer, fx);
-    if (tmilli > 4000) 
-      tmilli = 4000;
+    if (tmilli > 65520) 
+      tmilli = 65520;
     if (idx >=0 ) 
-      _vtTasksTimer[idx] = (uint8_t)(tmilli / 16);
+      _vtTasksTimer[idx] = (uint16_t)(tmilli / 16);
 }
 
 /**
@@ -164,7 +164,7 @@ void startVTimer(task_ptr_t fx, uint16_t tmilli) {
  */
 void stopVTimer(task_ptr_t fx) {
     int8_t idx = getTaskIdx(vtimer, fx);
-    _vtTasksTimer[idx] = (uint8_t)(0); 
+    _vtTasksTimer[idx] = (uint16_t)(0); 
 }
 
 
