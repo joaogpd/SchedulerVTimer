@@ -6,12 +6,20 @@
 #include <stdint.h>
 #include <stdarg.h>
 
+// Platforms
+#define ATMEGA328P 0
+#define MSP430FR5994 1
+
 #ifndef MAX_APP_TASKS
 #define MAX_APP_TASKS 10
 #endif
 
 #ifndef MAX_VT_TASKS
 #define MAX_VT_TASKS 5
+#endif
+
+#ifndef PLATFORM
+#define PLATFORM ATMEGA328P
 #endif
 
 #ifdef __cplusplus

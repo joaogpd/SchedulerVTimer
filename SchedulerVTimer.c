@@ -103,6 +103,8 @@ int8_t postTask(taskId_t taskType, task_ptr_t fx, uint8_t arg1) {
         return -1;
 }
 
+#if PLATFORM == ATMEGA328P
+
 /**
  * This function setups the registers on the ATMega328p to start 
  * Timer 2 with the given parameters, and enables interrupt on timer overflow.
@@ -137,6 +139,11 @@ ISR(TIMER2_OVF_vect) {
     }
   }
 }
+
+#endif
+
+#if PLATFORM = MSP430FR5994
+#endif
 
 
 /**
