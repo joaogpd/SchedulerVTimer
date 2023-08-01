@@ -8,8 +8,6 @@ being used.
 On the main program loop, the Arduino goes to sleep on the IDLE sleep mode, which allows
 for Timer interrupts and, when it wakes up, looks for tasks to execute.
 ***********************/
-
-
 #include "SchedulerVTimer.h"
 #include <avr/sleep.h>
 #include <LiquidCrystal.h>
