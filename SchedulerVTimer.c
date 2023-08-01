@@ -47,7 +47,7 @@ void setupTasks(taskId_t taskType,...) {
       auxFlag[taskCount] = false;
       auxArg[taskCount] = 0;
       if (taskType == vtimer) 
-        _vtTasksTimer[taskCount]=0;
+        _vtTasksTimer[taskCount] = 0;
     }
     taskCount--;
     va_end(args); 
