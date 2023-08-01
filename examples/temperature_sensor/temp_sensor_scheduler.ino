@@ -1,3 +1,15 @@
+/**********************
+This example of the SchedulerVTimer library was made using the Arduino UNO R2 board,
+which has a ATMEGA328P processor.
+The program reads the temperature from a LM35 temperature sensor, connected to the
+pin A0, and outputs its value to an LCD connected through pins 9 to 2, as per the code.
+Moreover, pin 7 is used to give power to the sensor, and cuts it off when it is not
+being used.
+On the main program loop, the Arduino goes to sleep on the IDLE sleep mode, which allows
+for Timer interrupts and, when it wakes up, looks for tasks to execute.
+***********************/
+
+
 #include "SchedulerVTimer.h"
 #include <avr/sleep.h>
 #include <LiquidCrystal.h>
