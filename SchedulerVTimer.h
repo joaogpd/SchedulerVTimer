@@ -8,7 +8,7 @@
 
 // Platforms
 #define ATMEGA328P 0
-#define MSP430FR5994 1
+#define MSP430FR59XX 1
 
 #ifndef MAX_APP_TASKS
 #define MAX_APP_TASKS 10

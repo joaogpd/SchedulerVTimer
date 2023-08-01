@@ -104,7 +104,6 @@ int8_t postTask(taskId_t taskType, task_ptr_t fx, uint8_t arg1) {
 }
 
 #if PLATFORM == ATMEGA328P
-
 /**
  * This function setups the registers on the ATMega328p to start 
  * Timer 2 with the given parameters, and enables interrupt on timer overflow.
@@ -120,10 +119,18 @@ void startClockTimer() {
   TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20) ;          // 1024 prescaler
   TIMSK2 |= (1 << TOIE2);               // enable timer overflow interrupt ISR
 }
-
 #endif
 
-#if PLATFORM == MSP430FR5994
+#if PLATFORM == MSP430FR59XX
+/**
+ * This function setups the registers on the MSP430FR59xx to start
+ * Timer A with the given parameters, and enables capture/compare interrupt 
+ */
+void startClockTimer() {
+  TA0CCTL0 = CCIE; // TACCR0 interrupt enabled
+  TA0CCR0 = 50000;
+  TA0CTL = TASSEL__SMCLK | MC__CONTINOUS; // SMCLK, continous mode
+}
 #endif
 
 /**
@@ -132,11 +139,9 @@ void startClockTimer() {
  * to count down on the amount of times it needs to be executed further.
  * It also restores the timer value to the starting one, allowing the timer to run again.
  */
-ISR(TIMER2_OVF_vect) {
 #if PLATFORM == ATMEGA328P
+ISR(TIMER2_OVF_vect) {
   TCNT2 = (uint8_t)(255 - (0.016 * 16000000 / 1024)); // preload timer 
-//#elif PLATFORM == MSP430FR5994
-#endif
   for (uint8_t i = 0; i < MAX_VT_TASKS; i++){
     if (_vtTasksTimer[i] > 0) {
       _vtTasksTimer[i]--;
@@ -147,6 +152,21 @@ ISR(TIMER2_OVF_vect) {
     }
   }
 }
+#endif
+
+#if PLATFORM == MSP430FR59XX
+#if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
+#pragma vector = TIMER0_A0_VECTOR
+__interrupt void Timer0_AO_ISR(void) 
+#elif defined(__GNUC__)
+void __attribute__  ((interrupt(TIMER0_A0_VECTOR))) Timer0_AO_ISR(void)
+#else
+#error Compiler not supported!
+#endif
+{
+  TA0CCR0 += 50000; // Add Offset to TA0CCR0
+}
+#endif
 
 /**
  * This function changes the _vtTasksTimer array to determine how many timers need to
