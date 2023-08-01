@@ -22,15 +22,15 @@ task_ptr_t logInt;
  * @param taskType the type of the tasks that will be added to the scheduler, valid values are app and vtimer
  * @param ... variable number of arguments, name of the tasks that need to be added to the scheduler
  */
-void setupTasks(taskId_t taskType,...){
+void setupTasks(taskId_t taskType,...) {
     va_list args;
     task_ptr_t* auxPtr;
     uint8_t* auxFlag;
     uint8_t* auxArg;
-    uint8_t taskCount=0;
+    uint8_t taskCount = 0;
     uint8_t maxTasks;
 
-    if (taskType==app){
+    if (taskType == app) {
       auxPtr  = _appTasks;
       auxFlag = _appTasksFlag;
       auxArg  = _appTasksArg;
@@ -42,12 +42,13 @@ void setupTasks(taskId_t taskType,...){
       maxTasks = MAX_VT_TASKS;
     }
     va_start(args, taskType);
-    auxPtr[taskCount++]=va_arg(args,task_ptr_t);
-    while ((auxPtr[taskCount++]=va_arg(args,task_ptr_t)) != 0 & taskCount < maxTasks){
-      auxFlag[taskCount]=false;
-      auxArg[taskCount]=0;
-      if (taskType==vtimer) _vtTasksTimer[taskCount]=0;
-      }
+    auxPtr[taskCount++] = va_arg(args, task_ptr_t);
+    while ((auxPtr[taskCount++] = va_arg(args, task_ptr_t)) != 0 & taskCount < maxTasks) {
+      auxFlag[taskCount] = false;
+      auxArg[taskCount] = 0;
+      if (taskType == vtimer) 
+        _vtTasksTimer[taskCount]=0;
+    }
     taskCount--;
     va_end(args); 
 }
@@ -58,18 +59,19 @@ void setupTasks(taskId_t taskType,...){
  * @param taskType the type of the task to be searched, valid values are app and vtimer
  * @param fx the name of the task to be searched
  */
-int8_t getTaskIdx(taskId_t taskType,task_ptr_t fx){
+int8_t getTaskIdx(taskId_t taskType,task_ptr_t fx) {
     task_ptr_t* auxPtr;
     uint8_t maxTasks;
-    if (taskType==app){
+    if (taskType == app) {
       auxPtr  = _appTasks;
       maxTasks = MAX_APP_TASKS;
     } else {
       auxPtr = _vtTasks;
       maxTasks = MAX_VT_TASKS;
     }
-    for (uint8_t i=0; i < maxTasks; i++){
-        if (fx == auxPtr[i]) return i;
+    for (uint8_t i = 0; i < maxTasks; i++) {
+        if (fx == auxPtr[i]) 
+          return i;
     }
     return -1;
 }
@@ -78,8 +80,8 @@ int8_t getTaskIdx(taskId_t taskType,task_ptr_t fx){
  * This function enables a given virtual timer task to be executed.
  * @param taskId the id of the task to be posted
  */
-void postVTTaskById(uint8_t taskId){
-  _vtTasksFlag[taskId]=true;
+void postVTTaskById(uint8_t taskId) {
+  _vtTasksFlag[taskId] = true;
 }
 
 /**
@@ -89,34 +91,33 @@ void postVTTaskById(uint8_t taskId){
  * @param fx the name of the task to be posted
  * @param arg1 the argument that will be passed to the task to be posted
  */
-int8_t postTask( taskId_t taskType, task_ptr_t fx, uint8_t arg1){
-    int8_t idx;
+int8_t postTask(taskId_t taskType, task_ptr_t fx, uint8_t arg1) {
+    int8_t idx; 
     uint8_t* auxFlag;
     uint8_t* auxArg;
-    auxFlag = (taskType==app) ? _appTasksFlag : _vtTasksFlag ;
-    auxArg = (taskType==app) ? _appTasksArg : _vtTasksArg ;
-    idx = getTaskIdx(taskType,fx);
-    if (idx >=0) {
+    auxFlag = (taskType == app) ? _appTasksFlag : _vtTasksFlag ;
+    auxArg = (taskType == app) ? _appTasksArg : _vtTasksArg ;
+    idx = getTaskIdx(taskType, fx);
+    if (idx >= 0) {
         auxArg[idx] = arg1;
         auxFlag[idx] = true;
         return 0;
-    } else{
+    } else
         return -1;
-    }
 }
 
 /**
  * This function setups the registers on the ATMega328p to start 
  * Timer 2 with the given parameters, and enables interrupt on timer overflow.
  */
-void startClockTimer(){
+void startClockTimer() {
   /*
    * TCNT2 = 255 – t*(clk/1024)
    * TCNT2 = 255 – 0,30*(16000000/1024) = 46785 // 0.30s
    */
   TCCR2A = 0;
   TCCR2B = 0;
-  TCNT2 = (uint8_t)(255-(0.016*16000000/1024)); // preload timer 
+  TCNT2 = (uint8_t)(255 - (0.016 * 16000000 / 1024)); // preload timer 
   TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20) ;          // 1024 prescaler
   TIMSK2 |= (1 << TOIE2);               // enable timer overflow interrupt ISR
 }
@@ -127,13 +128,13 @@ void startClockTimer(){
  * to count down on the amount of times it needs to be executed further.
  * It also restores the timer value to the starting one, allowing the timer to run again.
  */
-ISR(TIMER2_OVF_vect){
-  TCNT2 = (uint8_t)(255-(0.016*16000000/1024)); // preload timer 
-  for (uint8_t i=0; i<MAX_VT_TASKS; i++){
+ISR(TIMER2_OVF_vect) {
+  TCNT2 = (uint8_t)(255 - (0.016 * 16000000 / 1024)); // preload timer 
+  for (uint8_t i = 0; i < MAX_VT_TASKS; i++){
     if (_vtTasksTimer[i] > 0) {
       _vtTasksTimer[i]--;
       if (_vtTasksTimer[i] <= 0) {
-        _vtTasksTimer[i]=0;
+        _vtTasksTimer[i] = 0;
         postVTTaskById(i);
       }
     }
@@ -148,10 +149,12 @@ ISR(TIMER2_OVF_vect){
  * @param fx the name of the task that will have a timer associated to it
  * @param tmilli the amount of time in milisseconds that needs to pass before the task is executed 
  */
-void startVTimer(task_ptr_t fx,uint16_t tmilli){
-    int8_t idx = getTaskIdx(vtimer,fx);
-    if (tmilli > 4000) tmilli = 4000;
-    if (idx >=0 ) _vtTasksTimer[idx] = (uint8_t)(tmilli/16);
+void startVTimer(task_ptr_t fx, uint16_t tmilli) {
+    int8_t idx = getTaskIdx(vtimer, fx);
+    if (tmilli > 4000) 
+      tmilli = 4000;
+    if (idx >=0 ) 
+      _vtTasksTimer[idx] = (uint8_t)(tmilli / 16);
 }
 
 /**
@@ -159,8 +162,8 @@ void startVTimer(task_ptr_t fx,uint16_t tmilli){
  * the next time a Timer2 overflow interrupt is generated.
  * @param fx the name of the task that will have its timer count set to zero
  */
-void stopVTimer(task_ptr_t fx){
-    int8_t idx = getTaskIdx(vtimer,fx);
+void stopVTimer(task_ptr_t fx) {
+    int8_t idx = getTaskIdx(vtimer, fx);
     _vtTasksTimer[idx] = (uint8_t)(0); 
 }
 
@@ -180,17 +183,17 @@ void procTasks(){
     uint8_t maxTasks;
 
     // Call pending tasks
-    while (haveTasks){
-        haveTasks=false;
-        for (uint8_t taskType=app; taskType<=vtimer;taskType++){
-            auxPtr = (taskType==app) ? _appTasks : _vtTasks;
-            auxFlag = (taskType==app) ? _appTasksFlag : _vtTasksFlag ;
-            auxArg = (taskType==app) ? _appTasksArg : _vtTasksArg ;
-            maxTasks = (taskType==app) ? MAX_APP_TASKS : MAX_VT_TASKS ;
-            for (uint8_t tt=0; tt < maxTasks; tt++){
-                if (auxFlag[tt]==true){
-                    auxFlag[tt]=false;
-                    haveTasks=true;
+    while (haveTasks) {
+        haveTasks = false;
+        for (uint8_t taskType = app; taskType<=vtimer;taskType++) {
+            auxPtr = (taskType == app) ? _appTasks : _vtTasks;
+            auxFlag = (taskType == app) ? _appTasksFlag : _vtTasksFlag ;
+            auxArg = (taskType == app) ? _appTasksArg : _vtTasksArg ;
+            maxTasks = (taskType == app) ? MAX_APP_TASKS : MAX_VT_TASKS ;
+            for (uint8_t tt = 0; tt < maxTasks; tt++) {
+                if (auxFlag[tt] == true) {
+                    auxFlag[tt] = false;
+                    haveTasks = true;
                     auxPtr[tt](auxArg[tt]);
                 }
             }       
@@ -202,7 +205,7 @@ void procTasks(){
  * This function calls startClockTimer to setup Timer2.
  * @param logI ???
  */
-void initSchedulerVTTimer(task_ptr_t logI){
+void initSchedulerVTTimer(task_ptr_t logI) {
   logInt = logI;
   startClockTimer();
 }
