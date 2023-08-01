@@ -13,9 +13,6 @@ volatile uint8_t _vtTasksFlag[MAX_VT_TASKS] = {false}; /**< Array of flags tha d
 uint8_t _vtTasksArg[MAX_VT_TASKS] = {0}; /**< Array of arguments for the vtimer tasks by their corresponding position. */  
 volatile uint16_t _vtTasksTimer[MAX_VT_TASKS] = {0}; /**< Array of timer counter for the vtimer tasks by their corresponding position, that is, how many times it will run. */  
 
-
-task_ptr_t logInt;
-
 /**
  * This function adds the tasks passed as arguments to the scheduler, allowing these to
  * be posted by the user to be later executed.
@@ -203,10 +200,8 @@ void procTasks(){
 
 /**
  * This function calls startClockTimer to setup Timer2.
- * @param logI ???
  */
-void initSchedulerVTTimer(task_ptr_t logI) {
-  logInt = logI;
+void initSchedulerVTTimer() {
   startClockTimer();
 }
 

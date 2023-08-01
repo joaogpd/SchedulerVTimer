@@ -22,14 +22,14 @@ typedef enum {app=0,vtimer} taskId_t;
 typedef void (*task_ptr_t)(uint8_t);
 
 void setupTasks(taskId_t taskType,...);
-int8_t getTaskIdx(taskId_t taskType,task_ptr_t fx);
+int8_t getTaskIdx(taskId_t taskType, task_ptr_t fx);
 void postVTTaskById(uint8_t taskId);
-int8_t postTask(taskId_t taskType,task_ptr_t fx, uint8_t arg1);
+int8_t postTask(taskId_t taskType, task_ptr_t fx, uint8_t arg1);
 void startClockTimer();
-void startVTimer(task_ptr_t fx,uint16_t tmilli);
+void startVTimer(task_ptr_t fx, uint16_t tmilli);
 void stopVTimer(task_ptr_t fx);
 void procTasks();
-void initSchedulerVTTimer(task_ptr_t logInt);
+void initSchedulerVTTimer();
 
 #ifdef __cplusplus
 }
