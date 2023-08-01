@@ -142,7 +142,7 @@ ISR(TIMER2_OVF_vect) {
 
 #endif
 
-#if PLATFORM = MSP430FR5994
+#if PLATFORM == MSP430FR5994
 #endif
 
 
