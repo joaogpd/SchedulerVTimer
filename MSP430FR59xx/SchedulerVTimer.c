@@ -103,25 +103,6 @@ int8_t postTask(taskId_t taskType, task_ptr_t fx, uint8_t arg1) {
         return -1;
 }
 
-#if PLATFORM == ATMEGA328P
-/**
- * This function setups the registers on the ATMega328p to start 
- * Timer 2 with the given parameters, and enables interrupt on timer overflow.
- */
-void startClockTimer() {
-  /*
-   * TCNT2 = 255 – t*(clk/1024)
-   * TCNT2 = 255 – 0,30*(16000000/1024) = 46785 // 0.30s
-   */
-  TCCR2A = 0;
-  TCCR2B = 0;
-  TCNT2 = (uint8_t)(255 - (0.016 * 16000000 / 1024)); // preload timer 
-  TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20) ;          // 1024 prescaler
-  TIMSK2 |= (1 << TOIE2);               // enable timer overflow interrupt ISR
-}
-#endif
-
-#if PLATFORM == MSP430FR59XX
 /**
  * This function setups the registers on the MSP430FR59xx to start
  * Timer A with the given parameters, and enables capture/compare interrupt 
@@ -131,30 +112,13 @@ void startClockTimer() {
   TA0CCR0 = 50000;
   TA0CTL = TASSEL__SMCLK | MC__CONTINOUS; // SMCLK, continous mode
 }
-#endif
 
 /**
- * This Timer2 Interrupt Service Routine is triggered whenever a Timer2 expires. 
+ * This TimerA Interrupt Service Routine is triggered whenever a TimerA expires. 
  * It decrements the value of a position of _vtTasksTimer it finds to be higher than 0, 
  * to count down on the amount of times it needs to be executed further.
  * It also restores the timer value to the starting one, allowing the timer to run again.
  */
-#if PLATFORM == ATMEGA328P
-ISR(TIMER2_OVF_vect) {
-  TCNT2 = (uint8_t)(255 - (0.016 * 16000000 / 1024)); // preload timer 
-  for (uint8_t i = 0; i < MAX_VT_TASKS; i++){
-    if (_vtTasksTimer[i] > 0) {
-      _vtTasksTimer[i]--;
-      if (_vtTasksTimer[i] <= 0) {
-        _vtTasksTimer[i] = 0;
-        postVTTaskById(i);
-      }
-    }
-  }
-}
-#endif
-
-#if PLATFORM == MSP430FR59XX
 #if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
 #pragma vector = TIMER0_A0_VECTOR
 __interrupt void Timer0_AO_ISR(void) 
@@ -166,7 +130,6 @@ void __attribute__  ((interrupt(TIMER0_A0_VECTOR))) Timer0_AO_ISR(void)
 {
   TA0CCR0 += 50000; // Add Offset to TA0CCR0
 }
-#endif
 
 /**
  * This function changes the _vtTasksTimer array to determine how many timers need to
