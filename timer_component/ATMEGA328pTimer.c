@@ -1,4 +1,4 @@
-#include "ATMega328pTimer.h"
+#include "ATMEGA328pTimer.h"
 
 #ifdef __cplusplus
 extern "C" {
