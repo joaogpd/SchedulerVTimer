@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-extern volatile uint16_t _vtTasksTimer[]; /**< Array of timer counter for the vtimer tasks by their corresponding position, that is, how many times it will run. */  
+extern volatile uint16_t _vtTasksTimer[MAX_VT_TASKS]; /**< Array of timer counter for the vtimer tasks by their corresponding position, that is, how many times it will run. */  
 
 /**
  * This function setups the registers on the MSP430FR59xx to start
