@@ -1,5 +1,7 @@
 #include "MSP430FR59xxTimer.h"
 
+void postVTTaskById(uint8_t taskId);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -13,6 +15,7 @@ extern volatile uint16_t _vtTasksTimer[MAX_VT_TASKS]; /**< Array of timer counte
 void startClockTimer() {
   TA0CCTL0 = CCIE; // TACCR0 interrupt enabled
   TA0CCR0 = 525; // preload timer, 32768MHz on ACLK, 16 ms timer
+  TA0R = 0; // ensure timer starts counting from zero
   TA0CTL = TASSEL__ACLK | MC__CONTINOUS; // ACLK, continous mode
 }
 
@@ -31,7 +34,7 @@ void __attribute__  ((interrupt(TIMER0_A0_VECTOR))) Timer0_AO_ISR(void)
 #error Compiler not supported!
 #endif
 {
-  TA0CCR0 = 525; // preload timer, 32768MHz on ACLK, 16 ms timer
+  TA0R = 0 // reset timer value to count up again
   for (uint8_t i = 0; i < MAX_VT_TASKS; i++){
     if (_vtTasksTimer[i] > 0) {
       _vtTasksTimer[i]--;
