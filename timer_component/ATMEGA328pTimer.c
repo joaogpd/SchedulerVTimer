@@ -1,5 +1,7 @@
 #include "ATMEGA328pTimer.h"
 
+void postVTTaskById(uint8_t taskId);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
