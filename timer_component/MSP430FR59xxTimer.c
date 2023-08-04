@@ -27,9 +27,9 @@ void startClockTimer() {
  */
 #if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
 #pragma vector = TIMER0_A0_VECTOR
-__interrupt void Timer0_AO_ISR(void) 
+__interrupt void Timer0_A0_ISR(void) 
 #elif defined(__GNUC__)
-void __attribute__  ((interrupt(TIMER0_A0_VECTOR))) Timer0_AO_ISR(void)
+void __attribute__  ((interrupt(TIMER0_A0_VECTOR))) Timer0_A0_ISR(void)
 #else
 #error Compiler not supported!
 #endif
