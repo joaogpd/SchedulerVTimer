@@ -14,7 +14,7 @@ extern volatile uint16_t _vtTasksTimer[MAX_VT_TASKS]; /**< Array of timer counte
  */
 void startClockTimer() {
   TA0CCTL0 = CCIE; // TACCR0 interrupt enabled
-  TA0CCR0 = 525; // preload timer, 32768MHz on ACLK, 16 ms timer
+  TA0CCR0 = 32768 * 0.016; // preload timer, 32768MHz on ACLK, 16 ms timer
   TA0R = 0; // ensure timer starts counting from zero
   TA0CTL = TASSEL__ACLK | MC__CONTINOUS; // ACLK, continous mode
 }
