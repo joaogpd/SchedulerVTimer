@@ -12,8 +12,8 @@ extern volatile uint16_t _vtTasksTimer[MAX_VT_TASKS]; /**< Array of timer counte
  */
 void startClockTimer() {
   TA0CCTL0 = CCIE; // TACCR0 interrupt enabled
-  TA0CCR0 = (uint8_t)(255 - (0.016 * 16000000 / 1024)); // preload timer
-  TA0CTL = TASSEL__SMCLK | MC__CONTINOUS; // SMCLK, continous mode
+  TA0CCR0 = 525; // preload timer, 32768MHz on ACLK, 16 ms timer
+  TA0CTL = TASSEL__ACLK | MC__CONTINOUS; // ACLK, continous mode
 }
 
 /**
@@ -31,7 +31,7 @@ void __attribute__  ((interrupt(TIMER0_A0_VECTOR))) Timer0_AO_ISR(void)
 #error Compiler not supported!
 #endif
 {
-  TA0CCR0 = (uint8_t)(255 - (0.016 * 16000000 / 1024)); // preload timer 
+  TA0CCR0 = 525; // preload timer, 32768MHz on ACLK, 16 ms timer
   for (uint8_t i = 0; i < MAX_VT_TASKS; i++){
     if (_vtTasksTimer[i] > 0) {
       _vtTasksTimer[i]--;
