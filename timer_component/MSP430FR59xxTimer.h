@@ -8,6 +8,10 @@
 #define MAX_VT_TASKS 5
 #endif
 
+#ifndef FREQUENCY
+#define FREQUENCY 39062
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
