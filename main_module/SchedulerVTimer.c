@@ -1,4 +1,7 @@
 #include "SchedulerVTimer.h"
+// Choose platform for proper timer setup and configuration
+#include "../timer_component/MSP430FR59xxTimer.h"
+#include "../timer_component/ATMEGA328pTimer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -101,34 +104,6 @@ int8_t postTask(taskId_t taskType, task_ptr_t fx, uint8_t arg1) {
         return 0;
     } else
         return -1;
-}
-
-/**
- * This function setups the registers on the MSP430FR59xx to start
- * Timer A with the given parameters, and enables capture/compare interrupt 
- */
-void startClockTimer() {
-  TA0CCTL0 = CCIE; // TACCR0 interrupt enabled
-  TA0CCR0 = 50000;
-  TA0CTL = TASSEL__SMCLK | MC__CONTINOUS; // SMCLK, continous mode
-}
-
-/**
- * This TimerA Interrupt Service Routine is triggered whenever a TimerA expires. 
- * It decrements the value of a position of _vtTasksTimer it finds to be higher than 0, 
- * to count down on the amount of times it needs to be executed further.
- * It also restores the timer value to the starting one, allowing the timer to run again.
- */
-#if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
-#pragma vector = TIMER0_A0_VECTOR
-__interrupt void Timer0_AO_ISR(void) 
-#elif defined(__GNUC__)
-void __attribute__  ((interrupt(TIMER0_A0_VECTOR))) Timer0_AO_ISR(void)
-#else
-#error Compiler not supported!
-#endif
-{
-  TA0CCR0 += 50000; // Add Offset to TA0CCR0
 }
 
 /**
