@@ -43,7 +43,7 @@ void setupTasks(taskId_t taskType,...) {
     }
     va_start(args, taskType);
     auxPtr[taskCount++] = va_arg(args, task_ptr_t);
-    while ((auxPtr[taskCount++] = va_arg(args, task_ptr_t)) != 0 & taskCount < maxTasks) {
+    while ((auxPtr[taskCount++] = va_arg(args, task_ptr_t)) != 0 && taskCount < maxTasks) {
       auxFlag[taskCount] = false;
       auxArg[taskCount] = 0;
       if (taskType == vtimer) 
