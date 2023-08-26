@@ -9,5 +9,8 @@ The virtual timer is not platform agnostic whatsoever, and largely depends on wh
 
 New platforms can be added very easily, provided one knows how to configure a timer for the given architecture.
 
+Installation and usage is very straightforward, just drag the files from the main_module folder and the platform specific files from timer_component to your project's working directory. From there, you can import the library as usual and
+use its functionalities.
+
 
 
