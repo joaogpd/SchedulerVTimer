@@ -113,12 +113,14 @@ int8_t postTask(taskId_t taskType, task_ptr_t fx, uint8_t arg1) {
  * @param fx the name of the task that will have a timer associated to it
  * @param tmilli the amount of time in milisseconds that needs to pass before the task is executed 
  */
-void startVTimer(task_ptr_t fx, uint16_t tmilli) {
+void startVTimer(task_ptr_t fx, uint16_t tmilli, uint8_t arg1) {
     int8_t idx = getTaskIdx(vtimer, fx);
     if (tmilli > 65520) 
       tmilli = 65520;
-    if (idx >=0 ) 
+    if (idx >= 0) {
       _vtTasksTimer[idx] = (uint16_t)(tmilli / 16);
+      _vtTaskArg[idx] = arg1;
+    }
 }
 
 /**
