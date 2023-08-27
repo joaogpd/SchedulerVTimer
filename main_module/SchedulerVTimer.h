@@ -33,7 +33,7 @@ void setupTasks(taskId_t taskType,...);
 int8_t getTaskIdx(taskId_t taskType, task_ptr_t fx);
 void postVTTaskById(uint8_t taskId);
 int8_t postTask(taskId_t taskType, task_ptr_t fx, uint8_t arg1);
-void startVTimer(task_ptr_t fx, uint16_t tmilli);
+void startVTimer(task_ptr_t fx, uint16_t tmilli, uint8_t arg1);
 void stopVTimer(task_ptr_t fx);
 void procTasks();
 void initSchedulerVTTimer();
