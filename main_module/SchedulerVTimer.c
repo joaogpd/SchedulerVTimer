@@ -119,7 +119,7 @@ void startVTimer(task_ptr_t fx, uint16_t tmilli, uint8_t arg1) {
       tmilli = 65520;
     if (idx >= 0) {
       _vtTasksTimer[idx] = (uint16_t)(tmilli / 16);
-      _vtTaskArg[idx] = arg1;
+      _vtTasksArg[idx] = arg1;
     }
 }
 
