@@ -1,7 +1,11 @@
 #include "SchedulerVTimer.h"
 // Choose platform for proper timer setup and configuration
+#if defined(__MSP430FR5994__) 
 #include "../timer_component/MSP430FR59xxTimer.h"
+#endif
+#if defined(ARDUINO_AVR_UNO)
 #include "../timer_component/ATMEGA328pTimer.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
