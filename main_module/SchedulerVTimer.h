@@ -1,14 +1,8 @@
-
 #ifndef SCHEDULERVTIMER
 #define SCHEDULERVTIMER
-#include <Arduino.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdarg.h>
-
-// Platforms
-#define ATMEGA328P 0
-#define MSP430FR59XX 1
 
 #ifndef MAX_APP_TASKS
 #define MAX_APP_TASKS 10
@@ -16,10 +10,6 @@
 
 #ifndef MAX_VT_TASKS
 #define MAX_VT_TASKS 5
-#endif
-
-#ifndef PLATFORM
-#define PLATFORM ATMEGA328P
 #endif
 
 #ifdef __cplusplus
